@@ -1,15 +1,19 @@
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
 import { modal } from "react-modal-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import CloseIcon from "./CloseIcon";
-const handleOpenModal = (title, description, id) => {
-  modal.open(<MyModal title={title} description={description} />);
+
+const handleOpenModal = (id, DBtitle, DBdescription) => {
+  modal.open(<MyModal id={id} title={DBtitle} description={DBdescription} />);
 };
-export default function EditModal({ id, title, description }) {
+export default function EditModal({ id, DBtitle, DBdescription }) {
   return (
     <div>
       <button
         type="button"
-        onClick={() => handleOpenModal(id, title, description)}
+        onClick={() => handleOpenModal(id, DBtitle, DBdescription)}
         className="flex items-center px-4 py-1 font-medium tracking-wide
         text-black capitalize rounded-md bg-yellow-100 hover:bg-yellow-300
         hover:fill-current focus:outline-none transition duration-300 transform
@@ -31,7 +35,40 @@ export default function EditModal({ id, title, description }) {
     </div>
   );
 }
-const MyModal = ({ title, description, id }) => {
+
+const MyModal = ({ id, DBtitle, DBdescription }) => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  // console.log(title, description);
+  const notify = (massage) => toast.success(massage);
+  const notifyErr = (massage) => toast.error(massage);
+  const handleEdit = (id) => {
+    console.log(id);
+
+    try {
+      axios
+        .put(`http://localhost:5000/todo/${id}`, {
+          title: title,
+          description: description,
+        })
+        .then(function (response) {
+          if (response.status) {
+            notify("Todo updated Successfully");
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    } catch (err) {
+      notifyErr("Did not update todo");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+  };
   return (
     <div className="modal sm:w-8/12 w-11/12 bg-white duration-700 delay-300	  relative">
       <button
@@ -47,22 +84,22 @@ const MyModal = ({ title, description, id }) => {
           </h1>
           <div className="mt-6 flex flex-col  justify-center">
             <input
-              value={title}
+              // value={title}
               type="text"
-              // onChange={(e) => setTitle(e.target.value)}
-              placeholder="title"
+              onChange={(e) => setTitle(e.target.value)}
               className="cursor-pointer bg-gray-100  mb-3 rounded-md pl-2 outline-none py-2 border-2"
             />
             <input
-              value={description}
+              // value={description}
               type="text"
-              // onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => setDescription(e.target.value)}
               placeholder="description"
               className="cursor-pointer bg-gray-100  mb-3 rounded-md pl-2 outline-none py-2 border-2"
             />
           </div>
           <button
-            type="submit"
+            onClick={() => handleEdit(id)}
+            // type="submit"
             // onClick={handleSubmit}
             class="flex items-center mx-auto px-5 py-2.5 font-medium tracking-wide text-white capitalize   bg-yellow-500 rounded-md hover:bg-yellow-600  focus:outline-none focus:bg-gray-900  transition duration-300 transform active:scale-95 ease-in-out">
             <svg

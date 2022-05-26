@@ -1,8 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { modal } from "react-modal-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TodoList from "./TodoList";
+import DeleteModal from "./util/DeleteModal";
 
 export default function Display() {
   const notify = (massage) => toast.success(massage);
@@ -45,29 +47,10 @@ export default function Display() {
   };
   const handleDelete = async (id) => {
     console.log(id);
-    try {
-      axios
-        .delete(`http://localhost:5000/todo/${id}`, {
-          title: title,
-          description: description,
-        })
-        .then(function (response) {
-          if (response.status) {
-            notify("Todo deleted Successfully");
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    } catch (err) {
-      notifyErr("Did not delete todo");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    }
+    const handleOpenModal = () => {
+      modal.open(<DeleteModal id={id} />);
+    };
+    handleOpenModal();
   };
   return (
     <div>

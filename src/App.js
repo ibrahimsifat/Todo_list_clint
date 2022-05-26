@@ -1,14 +1,13 @@
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
-import Data from "./conponents/Data";
-import Form from "./conponents/Form";
-
+import Display from "./conponents/Display";
 function App() {
   return (
     <div>
-      <h1>Hello form</h1>
-      <Form />
-      <p>*********************++++++++*************</p>
-      <Data />
+      <Display />
+      {/* customization toast container*/}
+      <ToastContainer autoClose={1000} />
     </div>
   );
 }

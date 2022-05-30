@@ -3,10 +3,12 @@ import React, { useState } from "react";
 import { modal } from "react-modal-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import CloseIcon from "./CloseIcon";
 
 const handleOpenModal = (id, DBtitle, DBdescription) => {
-  modal.open(<MyModal id={id} title={DBtitle} description={DBdescription} />);
+  // console.log(id, DBtitle, DBdescription);
+  modal.open(
+    <MyModal id={id} DBtitle={DBtitle} DBdescription={DBdescription} />
+  );
 };
 export default function EditModal({ id, DBtitle, DBdescription }) {
   return (
@@ -39,12 +41,16 @@ export default function EditModal({ id, DBtitle, DBdescription }) {
 const MyModal = ({ id, DBtitle, DBdescription }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  // console.log(title, description);
+  console.log(title, description);
   const notify = (massage) => toast.success(massage);
   const notifyErr = (massage) => toast.error(massage);
   const handleEdit = (id) => {
     console.log(id);
-
+    if (!(title && description)) {
+      // alert("vblau");
+      notifyErr("Empty Todo! Please add todo");
+      return;
+    }
     try {
       axios
         .put(`http://localhost:5000/todo/${id}`, {
@@ -69,28 +75,45 @@ const MyModal = ({ id, DBtitle, DBdescription }) => {
       }, 1000);
     }
   };
+  // console.log(id, DBtitle, DBdescription);
   return (
     <div className="modal sm:w-8/12 w-11/12 bg-white duration-700 delay-300	  relative">
-      <button
-        className="absolute top- right-0"
-        type="button"
-        onClick={modal.close}>
-        <CloseIcon />
-      </button>
       <div className="flex mx-auto my-10  flex-col items-center justify-center ">
+        <button
+          className="absolute -top-2 -right-2"
+          type="button"
+          onClick={modal.close}>
+          <img
+            src="./close.png"
+            className="w-14 h-14 hover:scale-110 duration-300"
+            alt=""
+          />
+        </button>
         <form className="text-center w-10/12">
-          <h1 className="text-xl mt-2 text-center font-semibold text-gray-600">
+          <h1 className=" text-xl mt-2 text-center font-semibold text-gray-600">
             Edit your Todo
           </h1>
           <div className="mt-6 flex flex-col  justify-center">
+            <p className="text-left mb-1 ">
+              <span className="bg-yellow-200 font-bold px-1">
+                Original Title:
+              </span>{" "}
+              {DBtitle}
+            </p>
             <input
-              // value={title}
+              // value="{DBtitle}"
               type="text"
               onChange={(e) => setTitle(e.target.value)}
               className="cursor-pointer bg-gray-100  mb-3 rounded-md pl-2 outline-none py-2 border-2"
             />
+            <p className="text-left mb-1 ">
+              <span className="bg-yellow-200 font-bold px-1">
+                Original Desctiption:
+              </span>{" "}
+              {DBdescription}
+            </p>
             <input
-              // value={description}
+              // value={DBdescription}
               type="text"
               onChange={(e) => setDescription(e.target.value)}
               placeholder="description"

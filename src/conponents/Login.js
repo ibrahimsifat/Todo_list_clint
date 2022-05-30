@@ -3,13 +3,16 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Cookies from "universal-cookie";
 const notify = (massage) => toast.success(massage);
 const notifyErr = (massage) => toast.error(massage);
-
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  console.log(document.cookie);
+
+  const cookies = new Cookies();
+  console.log(cookies.get("ibtodo"));
+
   const submitLogin = (e) => {
     e.preventDefault();
     try {
@@ -24,7 +27,9 @@ function Login() {
         )
         .then((res) => {
           if (res.status) {
-            notify("Login Successful");
+            // console.log(res);
+            // console.log(res.data.massage);
+            notify(res.data.massage);
             setTimeout(() => {
               window.location.reload();
             }, 1000);
